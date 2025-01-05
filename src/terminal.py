@@ -16,6 +16,17 @@ def get_random_char():
 def random_length(max_length):
     return randint(1, max_length)
 
+def update_max_dimensions(stdscr):
+    curses.update_lines_cols()
+    return stdscr.getmaxyx()
+
+def update_colums(stdscr, columns, max_x, max_y):
+    if len(columns) < max_x:
+        columns.extend([{'y': randint(-20, 0)*1.0, 'speed': randint(100, 3000)/1000, 'tail_length':random_length(7)} for _ in range(max_x - len(columns))])
+    elif len(columns) > max_x:
+        columns = columns[:max_x]
+    return columns
+
 def main(stdscr):
     curses.curs_set(0)  # Cacher le curseur
     init_colors()
@@ -29,6 +40,8 @@ def main(stdscr):
 
     while True:
         stdscr.clear()
+        max_y, max_x = update_max_dimensions(stdscr)
+        columns = update_colums(stdscr, columns, max_x, max_y)
         for x in range(max_x):
             col = columns[x]
             col['y'] += col['speed']
